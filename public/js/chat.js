@@ -1,5 +1,15 @@
 const socket = io()
 
+const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true})
+console.log(username);
+
+socket.emit('join', {username, room}, (error) => {
+    if(error) {
+        alert(error)
+        location.href = '/'
+    }
+})
+
 
 // elements
 const messageForm = document.getElementById("form")
@@ -31,15 +41,12 @@ const autoscroll = () => {
 
     // how far scrolled
     const scrollOffset = messages.scrollTop + visibleHeight
-    console.log(containerHeight - newMessageHeight)
-    console.log(scrollOffset)
 
     if(containerHeight - newMessageHeight <= scrollOffset) {
         messages.scrollTop = messages.scrollHeight
     }
 }
 socket.on('message', (msg) => {
-    console.log(msg);
     const html = Mustache.render(msgTemplate, {
         username: msg.username,
         message: msg.text,
@@ -85,7 +92,6 @@ sendLocationBtn.addEventListener("click", () => {
 })
 
 socket.on('roomData', ({room, users}) => {
-    console.log(users)
     const html = Mustache.render(sidebarTemplate, {
         room,
         users
@@ -95,7 +101,6 @@ socket.on('roomData', ({room, users}) => {
 
 
 socket.on('locationMessage', (obj) => {
-    console.log(obj.url);
     const html = Mustache.render(locationTemplate, {
         username: obj.username,
         url: obj.url,
@@ -106,11 +111,3 @@ socket.on('locationMessage', (obj) => {
 })
 
 
-const {username, room} = Qs.parse(location.search, {ignoreQueryPrefix: true})
-
-socket.emit('join', {username, room}, (error) => {
-    if(error) {
-        alert(error)
-        location.href = '/'
-    }
-})

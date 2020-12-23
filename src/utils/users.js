@@ -1,4 +1,5 @@
 const users =[]
+const rooms = []
 
 const addUser = ({id, username, room}) => {
     username = username.trim().toLowerCase()
@@ -19,6 +20,11 @@ const addUser = ({id, username, room}) => {
 
     const user = {id,username,room}
     users.push(user)
+    console.log(users);
+    const existingRoom = rooms.find(r => r === room)
+    if(!existingRoom) {
+        rooms.push(room)
+    }
     return {user}
 }
 
@@ -28,6 +34,13 @@ const removeUser = (id) => {
         return {
             error: 'No such user exist'
         }
+    }
+
+    const getRemovedUserroom = users.find(user => user.id===id).room
+    const nonEmptyRoom = users.filter(user => user.room = getRemovedUserroom)
+    if(nonEmptyRoom.length == 0) {
+        const index = rooms.findIndex(r => r === getRemovedUserroom)
+        rooms.splice(index,1)
     }
     const user = users.splice(toDeleteUserIndex,1)[0]
     return user
@@ -45,6 +58,7 @@ const getUser = (id) => {
 }
 
 const getUsersInRoom = (room) => {
+    console.log(room);
     const usersInRoom = users.filter(user => user.room === room.trim().toLowerCase())
     if(usersInRoom.length === 0) {
         return {
@@ -54,11 +68,15 @@ const getUsersInRoom = (room) => {
     return usersInRoom
 }
 
+const getActiveRooms = () => {
+    return rooms
+}
 
 module.exports = {
     addUser,
     removeUser,
     getUser,
-    getUsersInRoom
+    getUsersInRoom,
+    getActiveRooms
 }
 

@@ -4,7 +4,7 @@ const http = require('http')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 const {generateMessage, generateLocationMessage} = require('./utils/message')
-const {addUser, removeUser, getUser, getUsersInRoom} = require('./utils/users.js')
+const {addUser, removeUser, getUser, getUsersInRoom, getActiveRooms} = require('./utils/users.js')
 const app = express()
 
 const server = http.createServer(app)
@@ -18,7 +18,8 @@ const port = process.env.PORT || 3000
 
 io.on('connection', (socket) => {
     console.log("new socket connection")
- 
+
+    io.emit('activerooms', getActiveRooms())
     
 
     socket.on('join', ({username, room}, callback) => {
